@@ -1,16 +1,16 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 
 class AccountForm extends Component {
   render = () => (
     <form
       onSubmit={e => {
-        e.preventDefault();
+        e.preventDefault()
         this.props.onSubmit({
           username: this.usernameEl.value,
           password: this.passwordEl.value
-        });
-        this.usernameEl.value = '';
-        this.passwordEl.value = '';
+        })
+        this.usernameEl.value = ''
+        this.passwordEl.value = ''
       }}
     >
       <div>
@@ -35,7 +35,7 @@ class AccountForm extends Component {
       </div>
       <input type="submit" />
     </form>
-  );
+  )
 }
 
-export default AccountForm;
+export default AccountForm

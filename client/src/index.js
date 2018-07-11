@@ -1,11 +1,11 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { Router, Route, Redirect } from 'react-router-dom'
+import { injectGlobal } from 'emotion'
 import auth from './common/auth'
 import history from './common/history'
 import Chat from './containers/Chat'
 import Authenticate from './containers/Authenticate'
-import { injectGlobal } from 'emotion'
 
 injectGlobal`
   * {
