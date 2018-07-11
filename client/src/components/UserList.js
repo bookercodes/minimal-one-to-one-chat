@@ -1,22 +1,22 @@
-import React, { Component } from 'react';
-import auth from '../common/auth';
-import axios from 'axios';
-import { css } from 'emotion';
+import React, { Component } from 'react'
+import auth from '../common/auth'
+import axios from 'axios'
+import { css } from 'emotion'
 
 class UserList extends Component {
-  state = { uids: [] };
+  state = { uids: [] }
   async fetchUserIds() {
     const res = await axios.get('http://localhost:8080/users', {
       headers: {
-        Authorization: auth.getAccessToken()
+        Authorization: auth.accessToken
       }
-    });
-    return res.data;
+    })
+    return res.data
   }
   async componentDidMount() {
-    console.log('fetching');
-    const uids = await this.fetchUserIds();
-    this.setState({ uids });
+    console.log('fetching')
+    const uids = await this.fetchUserIds()
+    this.setState({ uids })
   }
   render = () => {
     return (
@@ -34,7 +34,7 @@ class UserList extends Component {
             </li>
           ))}
       </ul>
-    );
-  };
+    )
+  }
 }
-export default UserList;
+export default UserList

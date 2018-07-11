@@ -1,20 +1,20 @@
-import React, { Component } from 'react';
-import { ChatManager, TokenProvider } from '@pusher/chatkit';
-import auth from '../common/auth';
-import _ from 'lodash';
+import React, { Component } from 'react'
+import { ChatManager, TokenProvider } from '@pusher/chatkit'
+import auth from '../common/auth'
+import _ from 'lodash'
 
-import ConversationList from '../components/ConversationList';
-import MessageList from '../components/MessageList';
-import NewMessageForm from '../components/NewMessageForm';
-import UserList from '../components/UserList';
-import { css } from 'emotion';
+import ConversationList from '../components/ConversationList'
+import MessageList from '../components/MessageList'
+import NewMessageForm from '../components/NewMessageForm'
+import UserList from '../components/UserList'
+import { css } from 'emotion'
 
 class Chat extends Component {
   state = {
     convos: [],
     searchTerm: '',
     currentConvo: null
-  };
+  }
 
   connect = async () => {
     this.chatkit = new ChatManager({
@@ -24,16 +24,16 @@ class Chat extends Component {
       tokenProvider: new TokenProvider({
         url: 'http://localhost:8080/chatkit-token',
         headers: {
-          Authorization: `${auth.getAccessToken()}`
+          Authorization: `${auth.accessToken}`
         }
       })
-    });
+    })
 
     const currentUser = await this.chatkit.connect({
       onAddedToRoom: this.onAddedToRoom
-    });
-    this.setState({ currentUser });
-  };
+    })
+    this.setState({ currentUser })
+  }
 
   startConvo = room => {
     return {
@@ -43,8 +43,8 @@ class Chat extends Component {
         .map(u => u.id)
         .filter(u => u !== this.state.currentUser.id)
         .shift()
-    };
-  };
+    }
+  }
 
   subscribeToRoom = convo => {
     this.setState(
@@ -57,74 +57,74 @@ class Chat extends Component {
           messageLimit: 100,
 
           hooks: { onNewMessage: this.onNewMessage }
-        });
+        })
       }
-    );
-  };
+    )
+  }
 
   subscribeToAllRooms = async () => {
     for (const room of this.state.currentUser.rooms) {
-      const convo = this.startConvo(room);
-      this.subscribeToRoom(convo);
+      const convo = this.startConvo(room)
+      this.subscribeToRoom(convo)
     }
 
     if (this.state.convos.length > 0) {
-      this.setCurrentConvo(this.state.convos[0]);
+      this.setCurrentConvo(this.state.convos[0])
     }
-  };
+  }
 
   setCurrentConvo = currentConvo => {
-    this.setState({ currentConvo });
-  };
+    this.setState({ currentConvo })
+  }
 
   onNewMessage = message => {
-    let convos = this.state.convos;
-    const convo = convos.find(c => c.roomId === message.roomId);
-    convo.messages = [...convo.messages, message];
-    convos = _.orderBy(convos, c => c.theirId);
-    convos = _.orderBy(convos, c => c.messages.length > 0, ['desc']);
-    this.setState({ convos });
-  };
+    let convos = this.state.convos
+    const convo = convos.find(c => c.roomId === message.roomId)
+    convo.messages = [...convo.messages, message]
+    convos = _.orderBy(convos, c => c.theirId)
+    convos = _.orderBy(convos, c => c.messages.length > 0, ['desc'])
+    this.setState({ convos })
+  }
 
   createConvo = async theirId => {
-    const convo = this.state.convos.find(c => c.theirId === theirId);
+    const convo = this.state.convos.find(c => c.theirId === theirId)
     if (!convo) {
-      const name = [theirId, auth.userId].sort().join('-');
+      const name = [theirId, auth.userId].sort().join('-')
       const room = await this.state.currentUser.createRoom({
         name,
         private: true, // Test if someone else can connect
         addUserIds: [theirId]
-      });
-      const newConvo = this.startConvo(room);
-      this.subscribeToRoom(newConvo);
-      this.setCurrentConvo(newConvo);
+      })
+      const newConvo = this.startConvo(room)
+      this.subscribeToRoom(newConvo)
+      this.setCurrentConvo(newConvo)
     } else {
-      this.setCurrentConvo(convo);
+      this.setCurrentConvo(convo)
     }
-    this.setState({ searchTerm: '' });
-  };
+    this.setState({ searchTerm: '' })
+  }
 
   onAddedToRoom = room => {
-    if (room.createdByUserId === this.state.currentUser.id) return;
-    const convo = this.startConvo(room);
-    this.subscribeToRoom(convo);
-  };
+    if (room.createdByUserId === this.state.currentUser.id) return
+    const convo = this.startConvo(room)
+    this.subscribeToRoom(convo)
+  }
 
   sendMessage = e => {
     this.state.currentUser.sendMessage({
       text: e,
       roomId: this.state.currentConvo.roomId
-    });
-  };
+    })
+  }
 
   componentDidMount = async () => {
-    await this.connect();
-    await this.subscribeToAllRooms();
-  };
+    await this.connect()
+    await this.subscribeToAllRooms()
+  }
 
   render = () => {
     if (!this.state.currentUser) {
-      return <p>Loading..</p>;
+      return <p>Loading..</p>
     }
     return (
       <div
@@ -169,7 +169,7 @@ class Chat extends Component {
                   border: '1px solid #F2F2F2'
                 })}
                 onChange={e => {
-                  this.setState({ searchTerm: e.target.value });
+                  this.setState({ searchTerm: e.target.value })
                 }}
               />
             </div>
@@ -207,7 +207,7 @@ class Chat extends Component {
           ) : null}
         </div>
       </div>
-    );
-  };
+    )
+  }
 }
-export default Chat;
+export default Chat

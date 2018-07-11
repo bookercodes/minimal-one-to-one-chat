@@ -1,40 +1,27 @@
-import decodeToken from "jwt-decode";
-// import moment from "moment";
-import history from "./history";
+import decodeToken from 'jwt-decode'
+import history from './history'
 
 class Auth {
-  handleResponse(response) {
-    const encodedToken = response.data.access_token;
-    localStorage.setItem("access_token", encodedToken);
-    history.replace("/");
+  get accessToken() {
+    return localStorage.getItem('access_token')
   }
-
-  getAccessToken() {
-    return localStorage.getItem("access_token");
-  }
-
-  // hasTokenExpired(encodedToken) {
-  //   const exp = moment.unix(decodeToken(encodedToken).exp);
-  //   const now = moment();
-  //   const secondsUntilExp = exp.diff(now, "seconds");
-  //   console.log("secondsUntilExp", secondsUntilExp);
-  //   return secondsUntilExp <= 0;
-  // }
 
   get userId() {
-    const encodedToken = this.getAccessToken();
-    const { sub } = decodeToken(encodedToken);
-    return sub;
+    const { accessToken } = this
+    const { sub } = decodeToken(accessToken)
+    return sub
+  }
+
+  handleResponse(response) {
+    const { access_token: accessToken } = response.data
+    localStorage.setItem('access_token', accessToken)
+    history.replace('/')
   }
 
   isAuthorized() {
-    const token = localStorage.getItem("access_token");
-    if (token) {
-      return true;
-    } else {
-      return false;
-    }
+    const accessToken = localStorage.getItem('access_token')
+    return !!accessToken
   }
 }
 
-export default new Auth();
+export default new Auth()
