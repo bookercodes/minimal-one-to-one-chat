@@ -2,7 +2,7 @@ import React from 'react'
 import { css } from 'emotion'
 import Avatar from './Avatar'
 
-const MessagePreview = ({ convo }) => {
+const MessagePeek = ({ convo }) => {
   if (convo.messages.length > 0) {
     const message = convo.messages[convo.messages.length - 1]
     return (
@@ -15,7 +15,7 @@ const MessagePreview = ({ convo }) => {
   return null
 }
 
-const Convo = ({ convo, currentConvo }) => (
+const Convo = ({ convo, currentConvo, onConvoSelected }) => (
   <li
     className={css({
       padding: 16,
@@ -32,7 +32,7 @@ const Convo = ({ convo, currentConvo }) => (
         background: '#F2F6FA'
       }
     })}
-    onClick={() => this.props.onConvoSelected(convo.theirId)}
+    onClick={() => onConvoSelected(convo.theirId)}
   >
     <div
       className={css({
@@ -60,16 +60,24 @@ const Convo = ({ convo, currentConvo }) => (
             {convo.theirId}
           </span>
         </div>
-        <MessagePreview convo={convo} />
+        <MessagePeek convo={convo} />
       </div>
     </div>
   </li>
 )
 
-const ConversationList = ({ convos, currentConvo }) => (
+const ConversationList = ({
+  convos,
+  currentConvo,
+  onConvoSelected
+}) => (
   <ul className={css({ overflowY: 'scroll' })}>
     {convos.map(convo => (
-      <Convo convo={convo} currentConvo={currentConvo} />
+      <Convo
+        convo={convo}
+        currentConvo={currentConvo}
+        onConvoSelected={onConvoSelected}
+      />
     ))}
   </ul>
 )
