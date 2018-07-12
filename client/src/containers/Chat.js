@@ -12,15 +12,25 @@ import { css } from 'emotion'
 class Chat extends Component {
   state = {
     convos: [],
-    searchTerm: '',
-    currentConvo: null
+    currentConvo: null,
+    searchTerm: ''
+  }
+
+  processMessage = message => {
+    let { convos } = this.state
+    const convo = convos.find(c => c.roomId === message.roomId)
+    convo.messages = [...convo.messages, message]
+    convos = _(convos)
+      .orderBy(c => c.theirId)
+      .orderBy(c => c.messages.length > 0, ['desc'])
+      .value()
+    this.setState({ convos })
   }
 
   connect = async () => {
     this.chatkit = new ChatManager({
       instanceLocator: 'v1:us1:cf654e3a-3a37-4b86-a44c-100178e2b276',
       userId: auth.userId,
-
       tokenProvider: new TokenProvider({
         url: 'http://localhost:8080/chatkit-token',
         headers: {
@@ -28,14 +38,13 @@ class Chat extends Component {
         }
       })
     })
-
     const currentUser = await this.chatkit.connect({
       onAddedToRoom: this.onAddedToRoom
     })
     this.setState({ currentUser })
   }
 
-  startConvo = room => {
+  createConvoFromRoom = room => {
     return {
       roomId: room.id,
       messages: [],
@@ -56,7 +65,7 @@ class Chat extends Component {
           roomId: convo.roomId,
           messageLimit: 100,
 
-          hooks: { onNewMessage: this.onNewMessage }
+          hooks: { onNewMessage: this.processMessage }
         })
       }
     )
@@ -64,29 +73,16 @@ class Chat extends Component {
 
   subscribeToAllRooms = async () => {
     for (const room of this.state.currentUser.rooms) {
-      const convo = this.startConvo(room)
+      const convo = this.createConvoFromRoom(room)
       this.subscribeToRoom(convo)
     }
 
     if (this.state.convos.length > 0) {
-      this.setCurrentConvo(this.state.convos[0])
+      this.setState({ currentConvo: this.state.convos[0] })
     }
   }
 
-  setCurrentConvo = currentConvo => {
-    this.setState({ currentConvo })
-  }
-
-  onNewMessage = message => {
-    let convos = this.state.convos
-    const convo = convos.find(c => c.roomId === message.roomId)
-    convo.messages = [...convo.messages, message]
-    convos = _.orderBy(convos, c => c.theirId)
-    convos = _.orderBy(convos, c => c.messages.length > 0, ['desc'])
-    this.setState({ convos })
-  }
-
-  createConvo = async theirId => {
+  startConvo = async theirId => {
     const convo = this.state.convos.find(c => c.theirId === theirId)
     if (!convo) {
       const name = [theirId, auth.userId].sort().join('-')
@@ -95,24 +91,24 @@ class Chat extends Component {
         private: true, // Test if someone else can connect
         addUserIds: [theirId]
       })
-      const newConvo = this.startConvo(room)
+      const newConvo = this.createConvoFromRoom(room)
       this.subscribeToRoom(newConvo)
-      this.setCurrentConvo(newConvo)
+      this.setState({ currentConvo: newConvo })
     } else {
-      this.setCurrentConvo(convo)
+      this.setState({ currentConvo: convo })
     }
     this.setState({ searchTerm: '' })
   }
 
   onAddedToRoom = room => {
     if (room.createdByUserId === this.state.currentUser.id) return
-    const convo = this.startConvo(room)
+    const convo = this.createConvoFromRoom(room)
     this.subscribeToRoom(convo)
   }
 
-  sendMessage = e => {
-    this.state.currentUser.sendMessage({
-      text: e,
+  sendMessage = async text => {
+    await this.state.currentUser.sendMessage({
+      text: text,
       roomId: this.state.currentConvo.roomId
     })
   }
@@ -175,13 +171,13 @@ class Chat extends Component {
             </div>
             {this.state.searchTerm ? (
               <UserList
-                onClick={this.createConvo}
+                onClick={this.startConvo}
                 searchTerm={this.state.searchTerm}
               />
             ) : null}
             {!this.state.searchTerm && this.state.convos ? (
               <ConversationList
-                onConvoSelected={this.createConvo}
+                onConvoSelected={this.startConvo}
                 currentConvo={this.state.currentConvo}
                 convos={this.state.convos}
               />
