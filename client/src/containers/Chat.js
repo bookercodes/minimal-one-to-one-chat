@@ -6,7 +6,7 @@ import _ from 'lodash'
 import ConversationList from '../components/ConversationList'
 import MessageList from '../components/MessageList'
 import NewMessageForm from '../components/NewMessageForm'
-import UserList from '../components/UserList'
+import UserList from './UserList'
 import { css } from 'emotion'
 
 class Chat extends Component {

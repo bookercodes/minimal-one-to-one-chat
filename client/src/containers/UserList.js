@@ -4,25 +4,22 @@ import axios from 'axios'
 import { css } from 'emotion'
 
 class UserList extends Component {
-  state = { uids: [] }
-  async fetchUserIds() {
-    const res = await axios.get('http://localhost:8080/users', {
+  state = { userIds: [] }
+
+  async componentDidMount() {
+    const { data } = await axios.get('http://localhost:8080/users', {
       headers: {
         Authorization: auth.accessToken
       }
     })
-    return res.data
+    this.setState({ userIds: data })
   }
-  async componentDidMount() {
-    console.log('fetching')
-    const uids = await this.fetchUserIds()
-    this.setState({ uids })
-  }
+
   render = () => {
     return (
       <ul>
-        {this.state.uids
-          .filter(c => c.includes(this.props.searchTerm))
+        {this.state.userIds
+          .filter(uid => uid.includes(this.props.searchTerm))
           .map(uid => (
             <li>
               <button
