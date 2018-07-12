@@ -1,43 +1,41 @@
-import React, { Component } from 'react';
-import { css } from 'emotion';
+import React from 'react'
+import { css } from 'emotion'
 
-class NewMessageForm extends Component {
-  render = () => (
-    <form
-      onSubmit={e => {
-        e.preventDefault();
-        this.props.onSubmit(this.inputEl.value);
-        this.inputEl.value = '';
-      }}
+const NewMessageForm = () => (
+  <form
+    onSubmit={e => {
+      e.preventDefault()
+      this.props.onSubmit(this.inputEl.value)
+      this.inputEl.value = ''
+    }}
+  >
+    <div
+      className={css({
+        display: 'flex',
+        paddingLeft: 60,
+        paddingRight: 60
+      })}
     >
-      <div
+      <input
+        type="text"
+        required
+        ref={el => (this.inputEl = el)}
+        placeholder="Write a mesasge then hit ENTER..."
         className={css({
-          display: 'flex',
-          paddingLeft: 60,
-          paddingRight: 60
+          width: '100%',
+          paddingTop: 32,
+          paddingBottom: 32,
+          fontSize: '.8em',
+          border: 'none',
+          borderBottom: '2px #ececec solid',
+          '&:focus': {
+            outline: 'none',
+            borderBottom: '2px #00DE72 solid'
+          }
         })}
-      >
-        <input
-          type="text"
-          required
-          ref={el => (this.inputEl = el)}
-          placeholder="Write a mesasge then hit ENTER..."
-          className={css({
-            width: '100%',
-            paddingTop: 32,
-            paddingBottom: 32,
-            fontSize: '.8em',
-            border: 'none',
-            borderBottom: '2px #ececec solid',
-            '&:focus': {
-              outline: 'none',
-              borderBottom: '2px #00DE72 solid'
-            }
-          })}
-        />
-      </div>
-    </form>
-  );
-}
+      />
+    </div>
+  </form>
+)
 
-export default NewMessageForm;
+export default NewMessageForm
