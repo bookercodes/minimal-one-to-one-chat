@@ -12,8 +12,8 @@ class Auth {
     return sub
   }
 
-  handleResponse(response) {
-    const { access_token: accessToken } = response.data
+  handleResponse(data) {
+    const { access_token: accessToken } = data
     localStorage.setItem('access_token', accessToken)
     history.replace('/')
   }

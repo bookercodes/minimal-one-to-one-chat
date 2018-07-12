@@ -1,25 +1,20 @@
-import axios from 'axios';
-import React, { Component } from 'react';
-import auth from '../common/auth';
-import AccountForm from '../components/AccountForm';
+import axios from 'axios'
+import React, { Component } from 'react'
+import auth from '../common/auth'
+import AccountForm from '../components/AccountForm'
 
 class Authenticate extends Component {
-  createAccount = async account => {
+  createAccount = async user => {
     try {
-      await axios.post('http://localhost:8080/users', {
-        user: {
-          username: account.username,
-          password: account.password
-        }
-      });
+      await axios.post('http://localhost:8080/users', { user })
     } catch (err) {
-      alert(err);
+      alert(err)
     }
-  };
+  }
 
   authenticate = async account => {
     try {
-      const response = await axios.post(
+      const { data } = await axios.post(
         'http://localhost:8080/token',
         {
           user: {
@@ -27,12 +22,12 @@ class Authenticate extends Component {
             password: account.password
           }
         }
-      );
-      auth.handleResponse(response);
+      )
+      auth.handleResponse(data)
     } catch (err) {
-      alert(err);
+      alert(err)
     }
-  };
+  }
 
   render = () => {
     return (
@@ -46,8 +41,8 @@ class Authenticate extends Component {
           <AccountForm onSubmit={this.authenticate} />
         </div>
       </div>
-    );
-  };
+    )
+  }
 }
 
-export default Authenticate;
+export default Authenticate
