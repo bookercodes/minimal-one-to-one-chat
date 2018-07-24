@@ -1,11 +1,11 @@
 import React from 'react'
 import { css } from 'emotion'
 
-const NewMessageForm = () => (
+const NewMessageForm = ({ onSubmit }) => (
   <form
     onSubmit={e => {
       e.preventDefault()
-      this.props.onSubmit(this.inputEl.value)
+      onSubmit(this.inputEl.value)
       this.inputEl.value = ''
     }}
   >
