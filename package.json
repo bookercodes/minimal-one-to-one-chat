@@ -1,5 +1,5 @@
 {
-  "dependencies": {
-    "react-emotion": "^9.2.5"
+  "devDependencies": {
+    "babel-eslint": "^8.2.6"
   }
 }
