@@ -29,7 +29,10 @@ const Convo = ({ convo, currentConvo, onConvoSelected }) => (
           ? '#00DE72'
           : null,
       '&:hover': {
-        background: '#F2F6FA'
+        background:
+          currentConvo && currentConvo.roomId === convo.roomId
+            ? 'inherit'
+            : '#F2F6FA'
       }
     })}
     onClick={() => onConvoSelected(convo.theirId)}
