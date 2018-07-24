@@ -35,14 +35,24 @@ class Chat extends Component {
   }
 
   subscribeToAllConvos = async () => {
-    const promises = this.state.currentUser.rooms.map(room => {
-      const convo = this.createConvoFromRoom(room)
-      return this.subscribeToConvo(convo)
-    })
-    await Promise.all(promises)
-
-    if (this.state.convos.length > 0) {
+    if (this.state.currentUser.rooms.length > 0) {
+      const promises = this.state.currentUser.rooms.map(room => {
+        const convo = this.createConvoFromRoom(room)
+        return this.subscribeToConvo(convo)
+      })
+      await Promise.all(promises)
       this.setState({ currentConvo: this.state.convos[0] })
+    }
+  }
+
+  createConvoFromRoom = room => {
+    return {
+      roomId: room.id,
+      messages: [],
+      theirId: room.users
+        .map(u => u.id)
+        .filter(u => u !== this.state.currentUser.id)
+        .shift()
     }
   }
 
@@ -70,24 +80,13 @@ class Chat extends Component {
     this.setState({ convos })
   }
 
-  createConvoFromRoom = room => {
-    return {
-      roomId: room.id,
-      messages: [],
-      theirId: room.users
-        .map(u => u.id)
-        .filter(u => u !== this.state.currentUser.id)
-        .shift()
-    }
-  }
-
   startConvo = async theirId => {
     const convo = this.state.convos.find(c => c.theirId === theirId)
     if (!convo) {
       const name = [theirId, auth.userId].sort().join('-')
       const room = await this.state.currentUser.createRoom({
         name,
-        private: true, // Test if someone else can connect
+        private: true,
         addUserIds: [theirId]
       })
       const newConvo = this.createConvoFromRoom(room)
@@ -100,9 +99,10 @@ class Chat extends Component {
   }
 
   onAddedToRoom = room => {
-    if (room.createdByUserId === this.state.currentUser.id) return
-    const convo = this.createConvoFromRoom(room)
-    this.subscribeToConvo(convo)
+    if (room.createdByUserId !== this.state.currentUser.id) {
+      const convo = this.createConvoFromRoom(room)
+      this.subscribeToConvo(convo)
+    }
   }
 
   sendMessage = async text => {
@@ -184,7 +184,6 @@ class Chat extends Component {
           </aside>
           <main
             className={css({
-              // flexGrow: 1,
               width: '100%',
               display: 'flex',
               flexDirection: 'column',
