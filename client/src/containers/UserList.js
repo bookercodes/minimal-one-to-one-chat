@@ -6,7 +6,7 @@ import { css } from 'emotion'
 class UserList extends Component {
   state = { userIds: [] }
 
-  async componentDidMount() {
+  async componentDidMount () {
     const { data } = await axios.get('http://localhost:8080/users', {
       headers: {
         Authorization: auth.accessToken
@@ -21,7 +21,7 @@ class UserList extends Component {
         {this.state.userIds
           .filter(uid => uid.includes(this.props.searchTerm))
           .map(uid => (
-            <li>
+            <li key={uid}>
               <button
                 onClick={() => this.props.onClick(uid)}
                 className={css({ padding: 10, margin: 10 })}

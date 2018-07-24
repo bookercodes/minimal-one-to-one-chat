@@ -75,6 +75,7 @@ const ConversationList = ({
     {convos.map(convo => (
       <Convo
         convo={convo}
+        key={convo.roomId}
         currentConvo={currentConvo}
         onConvoSelected={onConvoSelected}
       />

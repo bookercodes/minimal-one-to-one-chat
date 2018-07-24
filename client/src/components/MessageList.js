@@ -44,20 +44,20 @@ const Message = ({ message }) => (
 )
 
 class MessageList extends Component {
-  componentWillUpdate() {
+  UNSAFE_componentWillUpdate () {
     const list = ReactDOM.findDOMNode(this)
     this.shouldScrollToBottom =
       list.scrollTop + list.clientHeight + 100 >= list.scrollHeight
   }
 
-  componentDidUpdate() {
+  componentDidUpdate () {
     if (this.shouldScrollToBottom) {
       const list = ReactDOM.findDOMNode(this)
       list.scrollTop = list.scrollHeight
     }
   }
 
-  render() {
+  render () {
     return (
       <ul
         className={css({
@@ -67,7 +67,7 @@ class MessageList extends Component {
         })}
       >
         {this.props.messages.map(message => (
-          <Message message={message} />
+          <Message message={message} key={message.id} />
         ))}
       </ul>
     )
