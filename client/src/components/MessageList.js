@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import ReactDOM from 'react-dom'
 import { css } from 'emotion'
 import Avatar from './Avatar'
 
@@ -44,22 +43,27 @@ const Message = ({ message }) => (
 )
 
 class MessageList extends Component {
-  UNSAFE_componentWillUpdate () {
-    const list = ReactDOM.findDOMNode(this)
-    this.shouldScrollToBottom =
-      list.scrollTop + list.clientHeight + 100 >= list.scrollHeight
+  scrollToBottom = () => {
+    this.node.scrollTop = this.node.scrollHeight
   }
 
   componentDidUpdate () {
-    if (this.shouldScrollToBottom) {
-      const list = ReactDOM.findDOMNode(this)
-      list.scrollTop = list.scrollHeight
+    const shouldScrollToBottom =
+      this.node.scrollTop + this.node.clientHeight + 100 >=
+      this.node.scrollHeight
+    if (shouldScrollToBottom) {
+      this.scrollToBottom()
     }
+  }
+
+  componentDidMount () {
+    this.scrollToBottom()
   }
 
   render () {
     return (
       <ul
+        ref={node => (this.node = node)}
         className={css({
           overflowY: 'scroll',
           paddingLeft: 60,
