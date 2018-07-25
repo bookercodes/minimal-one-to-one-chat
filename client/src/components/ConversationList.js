@@ -31,7 +31,7 @@ const Convo = ({ convo, currentConvo, onConvoSelected }) => (
       '&:hover': {
         background:
           currentConvo && currentConvo.roomId === convo.roomId
-            ? 'inherit'
+            ? null
             : '#F2F6FA'
       }
     })}
